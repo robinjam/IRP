@@ -114,6 +114,25 @@
 		\item Not necessarily directly applicable to all action games; in BZFlag players control tanks that are constrained to traditional vehicle movement, much like a racing game.
 	\end{itemize}
 
+	\emph{An auto-adaptive Dead Reckoning Algorithm for Distributed Interactive Simulation}
+
+	\begin{itemize}
+		\item Primarily applicable to distributed interactive simulations rather than client-server architecture
+		\item In general dead-reckoning algorithms use a fixed threshold to control extrapolation errors
+		\item Instead, define threshold levels based on the area of interest (AOI) and sensitive region (SR), and adaptively adjust them based on the relative distances between entities
+		\item Can considerably reduce the number of update packets without sacrificing accuracy
+		\item Once prediction errors go over some threshold, send an update packet with correct position information
+		\item Exact position information is not needed for distant entities, so traditional DR might generate unnecessary update packets
+		\item Instead, dynamically adjust the threshold according to the relative distances between entities
+		\item Relevance filtering concepts are also applied
+		\item Each simulator estimates the positions of all entities, both local and remote
+		\item After each update of entity controled by a simulator, it compares the true position of the entity with the predicted positions at other simulators - if it's greater than some threshold then it sends a position update
+		\item Area of Interest (AOI), also called reachability region, is defined as a circle with constant radius around the entity, length is usually defined by entity type
+		\item Sensitive region (SR): if an entity moves into the SR of another entity, a collision is likely to occur
+		\item Threshold is chosen based on AOI and SR. If the entities are distant and unlikely to collide, accuracy is less important and so a large threshold is allowed.
+		\item 4 different threshold levels are used based on the interactions between entities, and their AOIs and SRs
+	\end{itemize}
+
 	\subsubsection{Delayed presentation}
 
 	An alternative approach to client-side lag compensation is to buffer updates received from the server for some time before rendering them. By doing this, the client can ensure that it always has at least two ``real'' world states between which it can interpolate, which completely eliminates the misprediction errors mentioned previously. A timeline showing this approach is given in figure~\ref{fig:interpolation_timeline}. Note that because the client buffers 3 updates, this system is also tolerant of occasional packet loss; the client always has at least 2 snapshots to interpolate between, even if 1 packet goes missing.
