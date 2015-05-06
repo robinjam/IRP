@@ -44,21 +44,21 @@
 
 	\begin{figure}
 		\centering\includegraphics[width=\linewidth]{figures/extrapolation_timeline.eps}
-		\caption{A timeline showing extrapolation}
+		\caption{A timeline showing extrapolation. The client predicts the current server time based on measured latency, and extrapolates object positions from the position and velocity data in the latest update received from the server ($t = 4$).}
 		\label{fig:extrapolation_timeline}
 	\end{figure}
 
 	Misprediction errors are very common under this scheme, occurring every time the velocity or bearing of a game object changes. The simplest way to correct misprediction errors is to immediately ``snap'' the object to the correct location once an update arrives from the server, but this can cause very visible visual discontinuities that can be distracting for the player. A less accurate but visually smoother approach is to interpolate between the position that the entity was last rendered at and its current estimated position (as shown in figure~\ref{fig:extrapolation}). This smooths out the visual discontinuities but also further reduces precision.
 
 	\begin{figure}
-		\centering\includegraphics[width=\linewidth]{figures/extrapolation.jpg}
+		\centering\includegraphics[width=\linewidth]{figures/extrapolation.eps}
 		\caption{Misprediction}
 		\label{fig:extrapolation}
 	\end{figure}
 
 	It is important to note that when using this scheme, game objects are very rarely (if ever) rendered at correct, accurate positions. This tradeoff is acceptable for some games, particularly where game objects change velocity or bearing reasonably slowly (for example, cars in a racing game) \cite{pantel2002suitability}, but for games requiring pinpoint accuracy, a better scheme is required.
 
-	\subsubsection{Interpolation}
+	\subsubsection{Delayed presentation}
 
 	An alternative approach to client-side lag compensation is to buffer updates received from the server for some time before rendering them. By doing this, the client can ensure that it always has at least two ``real'' world states between which it can interpolate, which completely eliminates the misprediction errors mentioned previously. A timeline showing this approach is given in figure~\ref{fig:interpolation_timeline}. Note that because the client buffers 3 updates, this system is also tolerant of occasional packet loss; the client always has at least 2 snapshots to interpolate between, even if 1 packet goes missing.
 
@@ -68,7 +68,7 @@
 
 	\begin{figure}
 		\centering\includegraphics[width=\linewidth]{figures/interpolation_timeline.eps}
-		\caption{A timeline showing the latency between client and server, and the delay introduced by interpolation of buffered world states.}
+		\caption{A timeline showing delayed presentation. The client buffers updates received from the server for a short period instead of displaying them immediately. Under this scheme the client always has at least two snapshots to interpolate between, eliminating the need for prediction/dead reckoning.}
 		\label{fig:interpolation_timeline}
 	\end{figure}
 
