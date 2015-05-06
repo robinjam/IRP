@@ -58,6 +58,8 @@
 
 	It is important to note that when using this scheme, game objects are very rarely (if ever) rendered at correct, accurate positions. This tradeoff is acceptable for some games, particularly where game objects change velocity or bearing reasonably slowly (for example, cars in a racing game) \cite{pantel2002suitability}, but for games requiring pinpoint accuracy, a better scheme is required.
 
+	% Sometimes use high-order differential coefficients http://www.mine-control.com/zack/timesync/timesync.html
+
 	\emph{On the Suitability of Dead Reckoning Schemes for Games}
 
 	\begin{itemize}
@@ -86,6 +88,32 @@
 		\item Using input prediction schemes for a competitive multiplayer action game might be infeasible for the same reason that input prediction failed for racing/simulation games in the paper: most action games use proprietary physics engines and many of them involve incredibly complex interactions with the environment (destructible terrain, etc.) Prediction is very difficult in such games.
 		\item Results are misleading at best: prediction probably doesn't work as well for action games as the authors claim, although they did present novel techniques for racing game prediction which perform better than the naive approach
 	\end{itemize}
+
+	\emph{http://www.mine-control.com/zack/timesync/timesync.html}
+
+	\begin{itemize}
+		\item NTP too complicated and takes a long time to converge, not ideal for games; the player expects to be able to jump straight in
+		\item Paper also mentions that NTP relies on UDP which might be blocked by many ISPs including corporate WANs
+		\item Proposes a very simple clock synchronisation algorithm built on TCP, essentially it's a moving average latency calculation
+		\item Latency estimates are pushed into an ordered list periodically, and the median is taken
+		\item Samples that are further away from the mean than 1 SD are assumed to be retransmissions, and are discarded
+		\item Typically converges within about 100ms, which is plenty fast enough
+		\item Implemented in NetStorm, Islands At War, a commercial RTS game, with good results
+	\end{itemize}
+
+	\emph{Accuracy in Dead-Reckoning Based Distributed Multi-Player Games}
+
+	\begin{itemize}
+		\item Focuses on accuracy
+		\item Primarily applicable to distributed/p2p games
+		\item Peers generate DR vectors for entities under their control, which consist of a position and velocity, and broadcast them to other peers
+		\item Without clock synchronisation, it's difficult to estimate what time a received packet was sent, and so entities can't be predicted accurately
+		\item Can't rely on latency to server since there is no server
+		\item Solution: synchronize clocks between peers and include timestamps in DR vectors
+		\item Implemented their new technique in BZFlag and compared against old technique; significant quantitative improvement, even with latency as high as 100ms
+		\item Not necessarily directly applicable to all action games; in BZFlag players control tanks that are constrained to traditional vehicle movement, much like a racing game.
+	\end{itemize}
+
 	\subsubsection{Delayed presentation}
 
 	An alternative approach to client-side lag compensation is to buffer updates received from the server for some time before rendering them. By doing this, the client can ensure that it always has at least two ``real'' world states between which it can interpolate, which completely eliminates the misprediction errors mentioned previously. A timeline showing this approach is given in figure~\ref{fig:interpolation_timeline}. Note that because the client buffers 3 updates, this system is also tolerant of occasional packet loss; the client always has at least 2 snapshots to interpolate between, even if 1 packet goes missing.
