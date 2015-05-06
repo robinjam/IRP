@@ -129,6 +129,14 @@
 		\item 4 different threshold levels are used based on the interactions between entities, and their AOIs and SRs
 	\end{itemize}
 
+	\section{Delayed input}
+
+	e.g. GGPO
+
+	Bucket synchronization
+
+	Local lag
+
 	\section{Delayed presentation}
 
 	An alternative approach to client-side lag compensation is to buffer updates received from the server for some time before rendering them. By doing this, the client can ensure that it always has at least two ``real'' world states between which it can interpolate, which completely eliminates the misprediction errors mentioned previously. A timeline showing this approach is given in figure~\ref{fig:interpolation_timeline}. Note that because the client buffers 3 updates, this system is also tolerant of occasional packet loss; the client always has at least 2 snapshots to interpolate between, even if 1 packet goes missing.
