@@ -58,6 +58,34 @@
 
 	It is important to note that when using this scheme, game objects are very rarely (if ever) rendered at correct, accurate positions. This tradeoff is acceptable for some games, particularly where game objects change velocity or bearing reasonably slowly (for example, cars in a racing game) \cite{pantel2002suitability}, but for games requiring pinpoint accuracy, a better scheme is required.
 
+	\emph{On the Suitability of Dead Reckoning Schemes for Games}
+
+	\begin{itemize}
+		\item 2 different categories of prediction scheme: prediction of positions, and prediction of input events
+		\item Position prediction
+		\item Scheme 1: assume constant velocity and predict position from that
+		\item Scheme 2: assume constant acceleration and predict velocity and hence position from that
+		\item Scheme 3: same as scheme 2, but using Lagrange polynom with degree of 2 (commonly used for interpolation and extrapolation in 3D graphics)
+		\item Scheme 4: Predict trajectory using constant velocity
+		\item Input prediction
+		\item Scheme 5: Predict position assuming constant control device (i.e. joystick) position
+		\item Scheme 6: Predict position assuming constant control device velocity
+		\item Scheme 7: Predict using Lagrange polynom and assuming constant control device acceleration
+		\item Considered applications to 3 different game types: sports, 3D action (fps, tps), simulators/racing games
+		\item For sports games, a cursor-like steering model was used
+		\item For action games and racing games, the x axis controls direction and the y axis controls motion along that bearing
+		\item Quality of prediction scheme is defined as difference between position calculated by game engine/server, and the predicted position, average deviation between actual and predicted taken
+		\item Results were surprising: the most complex schemes did not always lead to the best results.
+		\item Scheme 5 was very successful despite simplicity
+		\item Scheme 6 worked best for sports games, with all input prediction schemes working well for this game type
+		\item Scheme 7 worked best for action games
+		\item Only position prediction schemes were evaluated for racing/simulation games because a proprietary physics engine was used, and scheme 2/3 performed best
+		\item The paper claims that prediction drastically improved the experience for all game types, but fared worse for sports games because the characters move more eratically.
+		\item Critical evaluation
+		\item The model used to simulate action games in the paper is fairly unrealistic: characters in a first-person shooter do not behave like vehicles. Players can move freely in any direction rather than being constrained to motion in the direction they're facing, and tend to move very eraticalls
+		\item Using input prediction schemes for a competitive multiplayer action game might be infeasible for the same reason that input prediction failed for racing/simulation games in the paper: most action games use proprietary physics engines and many of them involve incredibly complex interactions with the environment (destructible terrain, etc.) Prediction is very difficult in such games.
+		\item Results are misleading at best: prediction probably doesn't work as well for action games as the authors claim, although they did present novel techniques for racing game prediction which perform better than the naive approach
+	\end{itemize}
 	\subsubsection{Delayed presentation}
 
 	An alternative approach to client-side lag compensation is to buffer updates received from the server for some time before rendering them. By doing this, the client can ensure that it always has at least two ``real'' world states between which it can interpolate, which completely eliminates the misprediction errors mentioned previously. A timeline showing this approach is given in figure~\ref{fig:interpolation_timeline}. Note that because the client buffers 3 updates, this system is also tolerant of occasional packet loss; the client always has at least 2 snapshots to interpolate between, even if 1 packet goes missing.
