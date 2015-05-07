@@ -192,30 +192,27 @@
 
 	TODO \cite{savery2013timelines} \cite{diot1999distributed}
 
-	\emph{Timelines: simplifying the programming of lag compensation for the next generation of networked games}
+	\Textcite{savery2013timelines} describe a unified approach to lag compensation built upon the concept of \emph{timelines}. Timelines are a data structure that ``expose the temporal dimension of shared data'', allowing the programmer to specify the known value of a variable at a specific point in time, and automatically and transparently handling the interpolation or extrapolation required to predict the value of that variable at a point in time where its actual value is unknown. Timelines are fully replicated, and each client has its own timeline object for each portion of the simulation it is interested in. This allows the programmer to manipulate the flow of time, or to create divergent timelines for different players.
+
+	The timelines model simplifies and unifies existing lag compensation algorithms, allowing dead reckoning, smooth correction of misprediction errors, delayed input, and time-offsetting to be implemented with relative ease. The model addresses 3 primary issues that lag compensation techniques must handle.
+
+	Firstly, the \emph{stale message problem} -- that there is no way to know when a received message was sent, due to variance in network delivery times (``jitter''). The timelines framework solves this problem by clock synchronisation and the inclusion of timestamps in each message.
+
+	Secondly, the \emph{stale state problem} -- games typically display updates to the user very frequently (60 times per second for most titles), but in order to conserve bandwidth network updates are often sent at a lower frequency. In some games updates might also be delayed if a client can detect that another client can extrapolate the position of an entity accurately via dead reckoning. The client must therefore have some method of compensating for missing or suppressed updates (interpolation), and the ability to keep track of remote state.
+
+	Thirdly, the \emph{frame of reference problem} -- some games deliberately alter the player's frame of reference (for example Half-Life 2, which uses delayed presentation). This increases the predictability of entities, but also allows state to diverge between players (i.e. each player has their own unique view of the world). To provide consistency and prevent cheating, the server must be able to ``rewind time'', to recreate a remote client's state when that remote client took an action. This is trivial within the timelines framework.
+
+	Finally, the \emph{multiple times at once problem} -- some lag compensation techniques (for example, smooth correction of misprediction errors), require that the client be able to know past, present and future values of a given variable at the same time. By exposing the temporal dimension of the data to the programmer, such algorithms become trivial to implement.
+
+	The model has some known limitations:
 
 	\begin{itemize}
-		\item "Exposes temporal dimension of shared data"
-		\item "Allows programmers to manipulate past and future values"
-		\item Timelines are shared between remote players, allowing programmers to manipulate the flow of time and to create divergent timelines for different players
-		\item Simplify and unify existing lag compensation algorithms
-		\item "To truly show the power of the approach, we use it to extend the local per- ception filters [32] algorithm, combining it with smooth corrections [34] to provide a novel solution to the distrib- uted physics problem."
-		\item 3 fundamental methods of lag compensation: dead reckoning, delaying local inputs, and remote lag
-		\item Stale message problem: there is no way to know when a message was sent, due to variance in network delivery times
-		\item Solution is to synchronise clocks and include timestamps in each message
-		\item Stale state problem: games typically update frequently (60 frames per second for modern games), but network updates are often less frequent to conserve bandwidth. Updates might be further deferred if a client can detect that a remote client already has the necessary information to accurately extrapolate
-		\item This requires clients to keep track of remote state, and have some method of compensating for missing/suppressed state updates (interpolation)
-		\item Frame of reference problem: some games deliberately alter the player's frame of reference, e.g. HL2 which uses delayed presentation. Increases predictability of entities, but also increases divergence of state between players (each player has a different view of the world)
-		\item Some lag compensation techniques, for example spline interpolation, require the client to be able to access shared state in the past, present and future simultaneously. This might be necessary for smoothly correcting misprediction, for example
-		\item Timelines framework provides get/set operations for values at any point in time, and interpolation and extrapolation functions that estimate values for times when no value is known.
-		\item Timelines are fully replicated, each client has its own timeline object for each portion of the remote state that it is interested in
-		\item Model allows dead reckoning, smooth correction of mispredictions, delayed input, time-offsetting/remote lag (i.e. HL2) to be implemented with relative ease
-		\item Limitations:
-		\item Does not support multiple clients updating the same timeline since each might overwrite values the other wrote (synchronization problem)
-		\item Unsuitable for large objects, since the entire shared object must be sent over the network for each update. Using custom serialization methods it would be possible to transmit only the portions of the structure that have changed (delta encoding), but further work is required to generalise this
-		\item Command type data like "shoot" or "crouch" is not handled well in this model, since there is no meaningful way to "interpolate" or "extrapolate" such commands. Solutions include maintaining a separate list of commands that occurred over a time range, or using an event-based model
-		\item Critical evaluation: doesn't assume tick-based game, so can't store updates in an array. Instead, a linked list is used and time values are represented as floating-point values instead of integers. Might cause performance concerns on some platforms due to repeated allocation/deallocation or cache considerations. Tick-based games could use sparse arrays instead (leaving array indices empty for ticks with no information).
+		\item It does not support multiple clients updating (writing) the same timeline at the same time, since each client might overwrite the values the other wrote. This could potentially be fixed by adding synchronisation primitives to the framework, but it is unclear when such a problem would arise in a real-world game, since typically only one is authoritative over a particular game object.
+		\item It's unsuitable for serialization of large objects, since the entire shared object must be sent over the network with every update. By using custom serialisation functions that only transmit the fields of the object that have changed (``delta encoding'') it is possible to sidestep this problem, but further work is required to generalise this to apply to every type of object.
+		\item Command type data (e.g. ``jump'', ``shoot'') is not handled in the timelines model since there is no meaningful way to ``interpolate'' or ``extrapolate'' such data. Instead, the application is expected to maintain a separate queue for such messages, or to use an event-driven approach.
 	\end{itemize}
+
+	An additional potential limitation of the model that is not addressed in the paper is that it does not assume a tick-based game engine. In the timelines framework, a doubly linked list is used to store known state values tagged by time. Finding the value of a shared variable at a particular point in time therefore requires traversal of the list, which involves a pointer dereference for each step (a highly cache-unfriendly operation). In most networked multiplayer games, the server operates on a fixed tick-rate, and values may only be updated during a tick. In such games, it might make more sense to represent timelines as arrays, where the array index represents the tick, and the value at that index represents the value of the variable at that tick. This could potentially reduce the time complexity of get and set operations against the timeline for tick-based games.
 
 	\section{Conclusions}
 
