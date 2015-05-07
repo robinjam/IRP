@@ -156,20 +156,11 @@
 
 	\section{Latency equalisation}
 
-	\cite{yu2012latency}
+	Existing Quality of Service (QoS) services such as DiffServ can be used to provide low-latency communications to time critical network traffic such as networked games, but this is insufficient for applications that require a bounded delay difference across multiple clients. For this reason, \textcite{yu2012latency} proposed a \emph{Latency EQualization} (LEQ) service, which equalises the perceived latency for all participating clients. This has applications to many fields, including teleconferencing, online trading, and networked gaming.
 
-	\begin{itemize}
-		\item Has applications to teleconferencing and online trading as well as gaming
-		\item In addition to requiring low end-to-end latency, such applications also benefit from minimising the difference between the latencies of multiple clients.
-		\item Existing QoS services allow end-to-end latency to be controlled, but this is insufficient if we need bounded delay difference across multiple clients
-		\item Proposed Latency EQualization (LEQ) service, equalises perceived latency for all participating clients
-		\item Uses some routers along the network as hubs to redirect packets along paths with similar end-to-end delay
-		\item Only a small number of hubs are required
-		\item Significantly reduces delay difference in synthetic tests
-		\item Compromise between end-to-end delay and delay difference between clients (fast clients have to slow down), maybe not appropriate for all applications
-		\item Incrementally deployable in today's networks, requiring only software modification to existing routers
-		\item Has not yet seen widespread adoption
-	\end{itemize}
+	LEQ operates by designating some routers along the network as \emph{hubs}, which redirect packets along paths with similar end-to-end delay. Only a relatively small number of hubs are required for good results. It is important to note that a tradeoff must be made between end-to-end delay (latency) and delay difference between clients, i.e. low-latency clients must necessarily have their latency increased in order to reduce delay difference. For this reason, LEQ is not suitable for all networked applications.
+
+	The system is incrementally deployable in today's networks, only requiring software modification of existing routers. In synthetic tests LEQ significantly reduces delay difference, but unfortunately it has not yet seen widespread adoption.
 
 	\section{Timelines: A unified framework}
 
