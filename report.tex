@@ -89,17 +89,11 @@
 
 	The results presented in the paper are misleading at best -- prediction likely does not work as well for action games as the authors claim. However, the novel prediction techniques presented for both racing games and sports games do perform better than the naive approach, and might see use in future titles.
 
-	\emph{http://www.mine-control.com/zack/timesync/timesync.html}
+	\Textcite{Simpson2000} describes a technique for improving the accuracy of dead reckoning via the use of a novel clock synchronisation algorithm. The author evaluates the possibility of using existing algorithms such as NTP, but concludes that because NTP is so difficult to implement and takes so long to converge, it is unsuitable for a game in which the player expects to be able to ``jump in'' rather than waiting for clock synchronisation to converge.
 
-	\begin{itemize}
-		\item NTP too complicated and takes a long time to converge, not ideal for games; the player expects to be able to jump straight in
-		\item Paper also mentions that NTP relies on UDP which might be blocked by many ISPs including corporate WANs
-		\item Proposes a very simple clock synchronisation algorithm built on TCP, essentially it's a moving average latency calculation
-		\item Latency estimates are pushed into an ordered list periodically, and the median is taken
-		\item Samples that are further away from the mean than 1 SD are assumed to be retransmissions, and are discarded
-		\item Typically converges within about 100ms, which is plenty fast enough
-		\item Implemented in NetStorm, Islands At War, a commercial RTS game, with good results
-	\end{itemize}
+	The proposed clock synchronisation algorithm is essentially a moving average latency calculation built upon TCP. The client periodically sends ``time request'' packets timestamped with the local time to the server, and the server sends back a timestamped response. The client subtracts the time when the response was received from the time when the request was sent in order to determine the round-trip time between client and server, halving this to obtain the latency, and takes the delta between the timestamp of the sent message and the timestamp of the received message, adding the latency to produce a clock delta. This process is repeated a number of times to produce an ordered list of clock deltas, and the median is taken. Samples that are further than 1 standard deviation from the mean are discarded. Finally, the local clock is adjusted based on this delta in order to synchronise the local and remote clocks.
+
+	This algorithm is intended to be used in tandem with timestamped updates to improve the accuracy of dead reckoning algorithms in networks with high variance in packet delivery times (``jitter''). It was implemented in \emph{NetStorm, Islands At War} (a commerial real-time strategy game) with good results, typically obtaining synchronisations less than 100ms.
 
 	\emph{Accuracy in Dead-Reckoning Based Distributed Multi-Player Games}
 
