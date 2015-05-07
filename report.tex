@@ -30,9 +30,9 @@
 
 	In this paper, I will introduce various state of the art techniques for lag compensation in networked multiplayer games, discussing their advantages and disadvantages, as well as which types of simulation each technique is suited to. I will also present some unified models.
 
-	\section{Quantifying effects of latency}
+	%\section{Quantifying effects of latency}
 
-	TODO \cite{beigbeder2004effects} \cite{chen2011perceptual} \cite{claypool2005effect} \cite{fritsch2005effect} \cite{sheldon2003effect} \cite{quax2004objective} \cite{dick2005analysis}
+	%TODO \cite{beigbeder2004effects} \cite{chen2011perceptual} \cite{claypool2005effect} \cite{fritsch2005effect} \cite{sheldon2003effect} \cite{quax2004objective} \cite{dick2005analysis}
 
 	\section{Dead reckoning}
 
@@ -84,7 +84,7 @@
 
 	\begin{itemize}
 		\item The model used to simulate action games is fundamentally unrealistic; characters in a first-person shooter do not behave like vehicles. Instead, players are able to move freely in any direction, rather than being constrained to motion in the direction they're facing. Players in shooter games also tend to move far more eratically than in the demonstration from the paper.
-		\item Using input prediction schemes for a competitive multiplayer action game might be infeasible for the same reason that input prediction failed for racing/simulation games in the paper: most action games use proprietary physics engines, many of them involving incredibly complex interactions between game objects and the environment (explosions, destructible terrain, etc.). Prediction is very difficult in such games, hence the ubiquity of the delayed presentation approach.
+		\item Using input prediction schemes for a competitive multiplayer action game might be infeasible for the same reason that input prediction failed for racing/simulation games in the paper: most action games use proprietary physics engines, many of them involving incredibly complex interactions between game objects and the environment (explosions, destructible terrain, etc.). Prediction is very difficult in such games, hence the ubiquity of the delayed presentation approach described in section~\ref{sec:delayed_presentation}.
 	\end{itemize}
 
 	The results presented in the paper are misleading at best -- prediction likely does not work as well for action games as the authors claim. However, the novel prediction techniques presented for both racing games and sports games do perform better than the naive approach, and might see use in future titles.
@@ -116,15 +116,16 @@
 
 	The primary drawback of this approach is memory consumption: in a system with $N$ entities controlled by $N$ simulators, each simulator must maintain not only its own state, but also the last known position of the controlled game object by each of the other $N - 1$ simulators.
 
-	\section{Delayed input}
+	%\section{Delayed input}
 
-	e.g. GGPO
+	%e.g. GGPO
 
-	Bucket synchronization
+	%Bucket synchronization
 
-	Local lag
+	%Local lag
 
 	\section{Delayed presentation}
+	\label{sec:delayed_presentation}
 
 	An interesting approach to lag compensation is used in first-person shooter games built upon the Source game engine (including the Counter-Strike series and the Team Fortress series, among others), as described by \textcite{bernier2001latency}. The engine was built using a traditional client-server model in which the server is authoritative over game state. Clients are relatively simple: they sample user input and package it into timestamped packets which get sent to the server. The server handles simulation logic (including movement, physics and hit registration), and broadcasts the new location data of each game object after each update to each client.
 
@@ -144,9 +145,9 @@
 		\label{fig:interpolation_timeline}
 	\end{figure}
 
-	\section{Network-level}
+	%\section{Network-level}
 
-	TODO \cite{yu2008latency} \cite{yu2012latency}
+	%TODO \cite{yu2008latency} \cite{yu2012latency}
 
 	\section{Timelines: A unified framework}
 
