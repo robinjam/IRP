@@ -126,6 +126,7 @@
 		\item For specific applications it might make sense to measure this
 		\item Packets might still arrive late if the network latency is higher than the local lag, or due to packet loss or variable delivery times (jitter)
 		\item Time warp algorithm repairs the state, too long to reproduce here
+		\item In the time warp synchronization scheme [10], snapshots of the game state are taken before the execution of each event. When there are late events, the game state is rolled back to one of the previous snapshots, and the game is reexecuted with the new events.
 		\item Keep a record of previous states, and pick the state that immediately precedes the earliest pending operation
 		\item Known problems: visual artefacts caused by the correction applied by timewarp algorithm. These can take many forms: objects jumping from one place to another, characters temporarily appearing to be alive when they're actually dead. No general solution to this, must be solved on a case-by-case basis
 		\item Implemented a very simple game to demonstrate this algorithm, tested with simulated network delay
@@ -153,9 +154,22 @@
 		\label{fig:interpolation_timeline}
 	\end{figure}
 
-	%\section{Network-level}
+	\section{Latency equalisation}
 
-	%TODO \cite{yu2008latency} \cite{yu2012latency}
+	\cite{yu2012latency}
+
+	\begin{itemize}
+		\item Has applications to teleconferencing and online trading as well as gaming
+		\item In addition to requiring low end-to-end latency, such applications also benefit from minimising the difference between the latencies of multiple clients.
+		\item Existing QoS services allow end-to-end latency to be controlled, but this is insufficient if we need bounded delay difference across multiple clients
+		\item Proposed Latency EQualization (LEQ) service, equalises perceived latency for all participating clients
+		\item Uses some routers along the network as hubs to redirect packets along paths with similar end-to-end delay
+		\item Only a small number of hubs are required
+		\item Significantly reduces delay difference in synthetic tests
+		\item Compromise between end-to-end delay and delay difference between clients (fast clients have to slow down), maybe not appropriate for all applications
+		\item Incrementally deployable in today's networks, requiring only software modification to existing routers
+		\item Has not yet seen widespread adoption
+	\end{itemize}
 
 	\section{Timelines: A unified framework}
 
