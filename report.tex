@@ -4,7 +4,6 @@
 \usepackage[backend=bibtex]{biblatex}
 
 \addbibresource{report.bib}
-\nocite{*}
 
 \begin{document}
 
@@ -26,9 +25,9 @@
 
 	In gaming, the term ``lag'' refers to the delay between when the user takes an action, and when the action takes effect within the game world. Lag can be introduced by many factors including input device latency, framerate, vsync, and monitor response time, but the most egregious source of lag in networked or online games is the latency between client and server. Although techniques exist to reduce this latency, the fact that data transfer is limited by the speed of light means that this latency can never be completely eliminated.
 
-	Lag reduces player engagement and enjoyment, and furthermore can impact performance in competitive multiplayer games \cite{beigbeder2004effects}. For this reason, most popular online games take measures to reduce the effect of network latency on the player's experience. Such techniques are generally referred to as ``lag compensation'' algorithms. Many such techniques exist, each of which make various tradeoffs that are appropriate for some types of game. Because of the disparate requirements of different genres of game, no ``silver bullet'' solution exists.
+	In some networked gaming scenarios this lag might be acceptable (for example, in virtual board games or card games), but in more fast-paced games this lag can reduce player engagement and enjoyment \cite{quax2004objective} \cite{dick2005analysis}, and furthermore can impact player performance in competitive titles \cite{beigbeder2004effects} \cite{claypool2005effect} \cite{sheldon2003effect}. For this reason, most popular online games take measures to reduce the effect of network latency on the player's experience. Such techniques are generally referred to as ``lag compensation'' algorithms. Many techniques exist, each of which make various tradeoffs that are appropriate for some types of game. Because of the disparate requirements of different genres of game, no ``silver bullet'' solution exists.
 
-	In this paper, I will introduce various state of the art techniques for lag compensation in networked multiplayer games, discussing their advantages and disadvantages, as well as which types of simulation each technique is suited to. I will also present some unified models.
+	In this paper, various state of the art techniques for lag compensation in networked multiplayer games are introduced, their advantages and disadvantages discussed, as well as an analysis of which types of simulation each technique is suited to. Furthermore, a network-based solution and a unified framework for lag compensation are explored.
 
 	%\section{Quantifying effects of latency}
 
