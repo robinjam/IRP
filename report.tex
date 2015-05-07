@@ -108,24 +108,13 @@
 		\item Not necessarily directly applicable to all action games; in BZFlag players control tanks that are constrained to traditional vehicle movement, much like a racing game.
 	\end{itemize}
 
-	\emph{An auto-adaptive Dead Reckoning Algorithm for Distributed Interactive Simulation}
+	\Textcite{cai1999auto} describe an auto-adaptive dead reckoning algorithm for distributed interactive simulations, which might also be applicable to peer to peer games. In general, distributed simulations built using dead-reckoning must make a tradeoff between prediction accuracy and bandwidth; by sending fewer position updates bandwidth may be conserved, at the cost of prediction accuracy. Many distributed systems operate by withholding position updates until the error between the actual position of an entity and its predicted position goes over some fixed threshold. The benefit of this approach is that by altering the threshold, the tradeoff between accuracy and bandwidth can be adjusted. However, not all clients need accurate location data for all entities (for example, a player does not need particularly accurate position information for another player a significant distance away), and so using a fixed threshold for every game object is inefficient.
 
-	\begin{itemize}
-		\item Primarily applicable to distributed interactive simulations rather than client-server architecture
-		\item In general dead-reckoning algorithms use a fixed threshold to control extrapolation errors
-		\item Instead, define threshold levels based on the area of interest (AOI) and sensitive region (SR), and adaptively adjust them based on the relative distances between entities
-		\item Can considerably reduce the number of update packets without sacrificing accuracy
-		\item Once prediction errors go over some threshold, send an update packet with correct position information
-		\item Exact position information is not needed for distant entities, so traditional DR might generate unnecessary update packets
-		\item Instead, dynamically adjust the threshold according to the relative distances between entities
-		\item Relevance filtering concepts are also applied
-		\item Each simulator estimates the positions of all entities, both local and remote
-		\item After each update of entity controled by a simulator, it compares the true position of the entity with the predicted positions at other simulators - if it's greater than some threshold then it sends a position update
-		\item Area of Interest (AOI), also called reachability region, is defined as a circle with constant radius around the entity, length is usually defined by entity type
-		\item Sensitive region (SR): if an entity moves into the SR of another entity, a collision is likely to occur
-		\item Threshold is chosen based on AOI and SR. If the entities are distant and unlikely to collide, accuracy is less important and so a large threshold is allowed.
-		\item 4 different threshold levels are used based on the interactions between entities, and their AOIs and SRs
-	\end{itemize}
+	The authors address this limitation by introducing the concept of \emph{threshold levels}. Each game object has a defined \emph{area of interest} (AoI), sometimes called the \emph{reachability region}, which is a circle around the game object whose radius is usually related to the type of object. The area of interest represents the region in which dead reckoning accuracy is important from the perspective of that game object. Furthermore, each game object has a \emph{sensitive region} (SR); if another game object moves within a game object's SR, a collision is likely to occur. The authors define 4 different threshold levels based upon the interactions between the AoI and SR of the game objects and the relative distance between them.
+
+	This algorithm requires each simulator to maintain the last known positions of all game objects, both local and remote. After each update of the game object controlled by a simulator, the true position of the entity is compared with the predicted positions at other simulators - if the difference is greater than the threshold, then a position update is sent.
+
+	The primary drawback of this approach is memory consumption: in a system with $N$ entities controlled by $N$ simulators, each simulator must maintain not only its own state, but also the last known position of the controlled game object by each of the other $N - 1$ simulators.
 
 	\section{Delayed input}
 
