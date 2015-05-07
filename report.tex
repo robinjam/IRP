@@ -126,40 +126,23 @@
 
 	\section{Delayed presentation}
 
-	An alternative approach to client-side lag compensation is to buffer updates received from the server for some time before rendering them. By doing this, the client can ensure that it always has at least two ``real'' world states between which it can interpolate, which completely eliminates the misprediction errors mentioned previously. A timeline showing this approach is given in figure~\ref{fig:interpolation_timeline}. Note that because the client buffers 3 updates, this system is also tolerant of occasional packet loss; the client always has at least 2 snapshots to interpolate between, even if 1 packet goes missing.
+	An interesting approach to lag compensation is used in first-person shooter games built upon the Source game engine (including the Counter-Strike series and the Team Fortress series, among others), as described by \textcite{bernier2001latency}. The engine was built using a traditional client-server model in which the server is authoritative over game state. Clients are relatively simple: they sample user input and package it into timestamped packets which get sent to the server. The server handles simulation logic (including movement, physics and hit registration), and broadcasts the new location data of each game object after each update to each client.
 
-	An immediately apparent problem with this approach is that while reducing the apparent effects of latency, it actually \emph{induces} additional latency by virtue of ``queuing up'' updates before they are rendered. Thus prediction must be applied to the game object controlled by the player in order to maintain interactivity.
+	Instead of using dead reckoning to predict object positions based on their last known locations, clients in the Source engine instead buffer received updates and render the world as it appeared some time in the past. By doing this, the client ensures it always has at least 2 real, historic updates to interpolate between, thus completely eliminating misprediction errors (but at the cost of further increasing latency). Packet loss is implicitly handled by the algorithm -- the client attempts to keep 3 updates buffered at all times, and so in the case of single packet loss it still has two valid states to interpolate between. A timeline illustrating this approach is given in figure~\ref{fig:interpolation_timeline}. If the client runs out of buffered packets (due to packet loss or server error), it falls back to extrapolation/dead reckoning.
 
-	If the client runs out of buffered packets (due to packet loss or server error), it may either freeze until a new state is received, or fall back to extrapolation. In the latter case, the same disadvantages detailed in the previous section occur.
+	In order to mimimise apparent latency, the client predicts the movement of the player's character while awaiting confirmation of each movement from the server. It is important to minimise discrepancies between client and server in the prediction logic, and so identical movement code is shared between the client and the server.
+
+	Due to the communication latency between client and server, the server's update messages are stale by the time they reach the client, and the client's update messages are stale by the time they reach the server. The artificial delay introduced on the client-side to allow interpolation to work futher increases this latency. If this delay were not accounted for, players would have to ``lead'' their targets by an amount proportional to their latency and the interpolation delay, which is an unacceptable compromise. In the Source engine, therefore, the server keeps a record of the past second of game states. When an update packet arrives from a client, the server uses this historical data to ``rewinds time'' an amount based on the player's latency and the interpolation period in order to see what the player saw when the command was sent, and the command is then executed in this context.
+
+	This approach can cause temporal paradoxes from the perspectives of some players. For instance, if a player with high latency shoots a player with lower latency just as the lower latency player hides behind cover, the shot will still register and the player who hid behind cover will die. From the perspective of the defending player, it appears as if they have been ``shot around a wall'', but from the perspective of the attacking player, they scored a fair hit. In practice these issues are rarely noticable due to the very short time periods involved, and so the tradeoff is considered acceptable for most purposes.
+
+	The delayed presentation approach has been used in many commercially successful games with excellent results.
 
 	\begin{figure}
 		\centering\includegraphics[width=\linewidth]{figures/interpolation_timeline.eps}
 		\caption{A timeline showing delayed presentation. The client buffers updates received from the server for a short period instead of displaying them immediately. Under this scheme the client always has at least two snapshots to interpolate between, eliminating the need for prediction/dead reckoning.}
 		\label{fig:interpolation_timeline}
 	\end{figure}
-
-	\section{Server-side lag compensation}
-
-	\subsection{No compensation}
-
-	The simplest approach to server-side lag compensation is to do nothing at all. If the clients are already predicting future world states via extrapolation, then the server doesn't need to do anything. If the clients are \emph{not} predicting future world states (for example, if they follow the buffering/interpolation approach detailed above), then a consequence of not applying server-side lag compensation is that players must lead their targets by an amount proportional to their latency and (if applicable) the interpolation period.
-
-	\subsection{Authoritative clients}
-
-	Another very simple approach is to make clients authoritative over their actions. For example, if the client says ``I am now at position X and I have killed player Y'', the server will just blindly accept this new information, move the player to position X, and mark player Y as dead. This only works if all clients can be trusted, which immediately rules out most real-world scenarios due to the possibility of cheating.
-
-	\subsection{Buffering of world state}
-
-	\cite{bernier2001latency}
-
-	\begin{itemize}
-		\item Buffer 1 sec of previous world states
-		\item When a client command arrives, rewind time based on their latency and (if applicable) their interp amount, interpolating between wold states if the command occurred between ticks
-		\item Execute the command in the context of this world state
-		\item This can cause temporal paradoxes - players can be shot after they duck behind cover. Usually a tradeoff the developer is willing to make since it ensures responsiveness for all players
-		\item If player latency varies too much (for example, if data follows many different routes), this is inaccurate. Works best if constant latency can be guaranteed
-		\item Gives ``peek advantage'' when players go round corners, more pronounced if there is a large latency difference between the players in the exchange
-	\end{itemize}
 
 	\section{Network-level}
 
