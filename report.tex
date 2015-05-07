@@ -95,18 +95,11 @@
 
 	This algorithm is intended to be used in tandem with timestamped updates to improve the accuracy of dead reckoning algorithms in networks with high variance in packet delivery times (``jitter''). It was implemented in \emph{NetStorm, Islands At War} (a commerial real-time strategy game) with good results, typically obtaining synchronisations less than 100ms.
 
-	\emph{Accuracy in Dead-Reckoning Based Distributed Multi-Player Games}
+	\Textcite{aggarwal2004accuracy} furthered this idea and developed an improvement for the dead reckoning algorithm, focusing on extrapolation accuracy, testing their new approach in the game \emph{BZFlag}.
 
-	\begin{itemize}
-		\item Focuses on accuracy
-		\item Primarily applicable to distributed/p2p games
-		\item Peers generate DR vectors for entities under their control, which consist of a position and velocity, and broadcast them to other peers
-		\item Without clock synchronisation, it's difficult to estimate what time a received packet was sent, and so entities can't be predicted accurately
-		\item Can't rely on latency to server since there is no server
-		\item Solution: synchronize clocks between peers and include timestamps in DR vectors
-		\item Implemented their new technique in BZFlag and compared against old technique; significant quantitative improvement, even with latency as high as 100ms
-		\item Not necessarily directly applicable to all action games; in BZFlag players control tanks that are constrained to traditional vehicle movement, much like a racing game.
-	\end{itemize}
+	This new approach is primarily applicable to distributed games, in which there is no authoritative server, or in which players are authoritative over the positions of their own characters. The algorithm involves clients generating dead reckoning vectors (position and velocity data) for game objects under their control at every update, broadcasting these vectors to every other client. Without clock synchronisation, and without knowledge of the latency between any given pair of peers, it is impossible to estimate when a given update packet was sent. For this reason, a clock synchronisation algorithm is used to ensure the clocks on each client are consistent, and the dead reckoning vectors are augmented with timestamps so that the recipient can accurately plot the object's path.
+
+	The authors implemented their new technique in BZFlag, and added instrumentation to trace the paths that game objects take both on the sender and receiver, so that the accuracy of the simulation could be measured. It was found that there were significant quantitative improvements under the new approach, even with latency as high as 100ms. Unfortunately this technique is not necessarily directly applicable to all action games; BZFlag players control tanks that are constrained to traditional vehicle movement (much like a racing game), whereas action games in which the player is on foot tend to have far more eratic movement patterns.
 
 	\Textcite{cai1999auto} describe an auto-adaptive dead reckoning algorithm for distributed interactive simulations, which might also be applicable to peer to peer games. In general, distributed simulations built using dead-reckoning must make a tradeoff between prediction accuracy and bandwidth; by sending fewer position updates bandwidth may be conserved, at the cost of prediction accuracy. Many distributed systems operate by withholding position updates until the error between the actual position of an entity and its predicted position goes over some fixed threshold. The benefit of this approach is that by altering the threshold, the tradeoff between accuracy and bandwidth can be adjusted. However, not all clients need accurate location data for all entities (for example, a player does not need particularly accurate position information for another player a significant distance away), and so using a fixed threshold for every game object is inefficient.
 
