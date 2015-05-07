@@ -111,27 +111,13 @@
 
 	\section{Local lag}
 
-	\Textcite{mauve2004local}
+	In situations where it is difficult to predict the future positions of game objects, it can instead be useful to voluntarily decrease responsiveness in order to eliminate short-term inconsistencies, as described by \textcite{mauve2004local}. Instead of immediately processing events, they are delayed for a certain amount of time before being executed (this delay is often configurable by the user under the name ``frame delay'' or similar). Work conducted in the area of system response time suggests a highest acceptable response time of 80-100ms \cite{teal1992performance} \cite{shneiderman1984response} \cite{card1983psychology}, so the local lag period should generally be shorter than this value. For specific applications it may be useful to qualitatively measure the maximum acceptable amount of lag.
 
-	\begin{itemize}
-		\item Voluntarily decrease responsiveness in order to eliminate short-term inconsistencies
-		\item Makes inconsistencies less likely but can't completely eliminate them
-		\item Time-warp algorithm to repair inconsistencies as they appear
-		\item Developed a simple demonstration program used to verify theoretical observations
-		\item Discrete = changes in state in response to user-initiated operations
-		\item Continuous = changes in state may occur due to passage of time without requiring exhange of information
-		\item Rigorous definitions of consistency and correctness out of scope of this report
-		\item Instead of immediately processing events, they are delayed for a certain amount of time before being executed (often configurable by the player as an option labeled "frame delay")
-		\item Work conducted in the area of system response time suggests a highest acceptable response time of 80-100ms \cite{teal1992performance} \cite{shneiderman1984response} \cite{card1983psychology}, so local lag should generally be below this value (citations 11-13 in paper)
-		\item For specific applications it might make sense to measure this
-		\item Packets might still arrive late if the network latency is higher than the local lag, or due to packet loss or variable delivery times (jitter)
-		\item Time warp algorithm repairs the state, too long to reproduce here
-		\item In the time warp synchronization scheme [10], snapshots of the game state are taken before the execution of each event. When there are late events, the game state is rolled back to one of the previous snapshots, and the game is reexecuted with the new events.
-		\item Keep a record of previous states, and pick the state that immediately precedes the earliest pending operation
-		\item Known problems: visual artefacts caused by the correction applied by timewarp algorithm. These can take many forms: objects jumping from one place to another, characters temporarily appearing to be alive when they're actually dead. No general solution to this, must be solved on a case-by-case basis
-		\item Implemented a very simple game to demonstrate this algorithm, tested with simulated network delay
-		\item Commonly used in fighting games, popular implementation is GGPO
-	\end{itemize}
+	Packets might still arrive late if network latency is higher than the local lag, or due to packet loss or variable delivery times (``jitter''). For this reason, the local lag algorithm is often combined with an additional algorithm that can repair the state when this occurs. In the \emph{time warp} algorithm detailed in the paper, game state snapshots are taken before the execution of each event and stored. When events arrive late, the game state is reverted to one of the saved snapshots, and the game is re-executed from that state with the new events.
+
+	The time warp algorithm can cause visual artifacts when it applies its corrections to the game state. These artifacts can take many forms: objects jumping from one place to another, characters temporarily appearing to be alive when they're actually dead, etc. There is no general solution to this problem, and it must be solved on a case-by-case basis as the application requires.
+
+	The local lag and time warp algorithms have been implemented successfully in many commercial fighting games, including \emph{SkullGirls}, \emph{Lethal League} and \emph{Street Fighter III}. A popular implementation is the GGPO middleware.
 
 	\section{Delayed presentation}
 	\label{sec:delayed_presentation}
