@@ -168,7 +168,16 @@
 
 	\section{Conclusions}
 
-	TODO
+	\begin{itemize}
+		\item No catchall solution
+		\item Lots of dead reckoning algorithms, but added complexity does not always equate to significantly increased accuracy
+		\item Delayed presentation is still the standard for first-person shooters. Works well even at comparatively high latency but causes temporal paradoxes
+		\item Dead reckoning works well if game objects accelerate/decelerate slowly (racing games), but not if movement is erratic
+		\item Local lag is popular for fighting games. Works well on low latency connections but since it doesn't actually eliminate lag it's bad for high latency networks
+		\item All of these have drawbacks that would be unacceptable for certain applications
+		\item Could see the move towards unified frameworks like Timelines that abstract away the differences between these techniques, potentially allowing them to be combined where necessary
+		\item Improved network speed would help, but data cannot travel faster than light so there will always necessarily be lag
+	\end{itemize}
 
 	\printbibliography
 
