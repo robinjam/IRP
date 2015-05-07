@@ -109,13 +109,28 @@
 
 	The primary drawback of this approach is memory consumption: in a system with $N$ entities controlled by $N$ simulators, each simulator must maintain not only its own state, but also the last known position of the controlled game object by each of the other $N - 1$ simulators.
 
-	%\section{Delayed input}
+	\section{Local lag}
 
-	%e.g. GGPO
+	\Textcite{mauve2004local}
 
-	%Bucket synchronization
-
-	%Local lag
+	\begin{itemize}
+		\item Voluntarily decrease responsiveness in order to eliminate short-term inconsistencies
+		\item Makes inconsistencies less likely but can't completely eliminate them
+		\item Time-warp algorithm to repair inconsistencies as they appear
+		\item Developed a simple demonstration program used to verify theoretical observations
+		\item Discrete = changes in state in response to user-initiated operations
+		\item Continuous = changes in state may occur due to passage of time without requiring exhange of information
+		\item Rigorous definitions of consistency and correctness out of scope of this report
+		\item Instead of immediately processing events, they are delayed for a certain amount of time before being executed (often configurable by the player as an option labeled "frame delay")
+		\item Work conducted in the area of system response time suggests a highest acceptable response time of 80-100ms \cite{teal1992performance} \cite{shneiderman1984response} \cite{card1983psychology}, so local lag should generally be below this value (citations 11-13 in paper)
+		\item For specific applications it might make sense to measure this
+		\item Packets might still arrive late if the network latency is higher than the local lag, or due to packet loss or variable delivery times (jitter)
+		\item Time warp algorithm repairs the state, too long to reproduce here
+		\item Keep a record of previous states, and pick the state that immediately precedes the earliest pending operation
+		\item Known problems: visual artefacts caused by the correction applied by timewarp algorithm. These can take many forms: objects jumping from one place to another, characters temporarily appearing to be alive when they're actually dead. No general solution to this, must be solved on a case-by-case basis
+		\item Implemented a very simple game to demonstrate this algorithm, tested with simulated network delay
+		\item Commonly used in fighting games, popular implementation is GGPO
+	\end{itemize}
 
 	\section{Delayed presentation}
 	\label{sec:delayed_presentation}
