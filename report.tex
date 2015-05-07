@@ -56,34 +56,38 @@
 
 	% Sometimes use high-order differential coefficients http://www.mine-control.com/zack/timesync/timesync.html
 
-	\emph{On the Suitability of Dead Reckoning Schemes for Games}
+	\Textcite{pantel2002suitability} discusses the suitability of Dead Reckoning schemes for games. The authors classify prediction schemes into two categories: prediction of positions, and prediction of input events. Within these categories they defined 7 different prediction schemes:
+
+	\subsection{Position prediction schemes}
+
+	\begin{enumerate}
+		\item Assume objects are moving at a constant velocity, and extrapolate their new positions from their old ones
+		\item Assume objects are experiencing constant acceleration, extrapolate their velocity and thus their position
+		\item The same as scheme 2, but using a Lagrange polynom of degree 2 (commonly used for interpolation and extrapolation in 3D graphics)
+		\item Assume objects are moving at a constant velocity, and use this to plot their trajectory
+	\end{enumerate}
+
+	\subsection{Input event prediction schemes}
+
+	\begin{enumerate}
+		\setcounter{enumi}{5}
+		\item Assume control device (i.e. joystick) positions remain constant, and predict the effect this input will have on the game object
+		\item Assume control device velocity remains constant
+		\item Assume control device acceleration remains constant, and extrapolate velocity using a degree 2 Lagrange polynom
+	\end{enumerate}
+
+	The authors considered applications of these prediction schemes to 3 different types of game: sports games, 3D action games, and simulators/racing games. A simple model was constructed for each type of game in order to assess the viability of each prediction scheme. For sports games, a ``cursor-like steering model'' was used -- game objects steer towards a point within the game world. For both action games and racing games, game objects were assumed to behave like vehicles -- the x axis of the control device manipulates the direction of the game object, and the y axis controls its acceleration. The quality of a prediction scheme was defined as the average deviation between game object positions calculated by the game engine, and their predicted positions.
+
+	The results were surprising: the most complex schemes did not always lead to the best results. For example, scheme 5 was particularly successful despite its simplicity. For sports games, scheme 6 produced the lowest average deviation, with all input-based prediction methods faring reasonably well. For action games, scheme 7 fared best. Because of the proprietary physics engine used in the racing game example, it was only possible to evaluate position-based prediction. Schemes 2 and 3 performed equally well.
+
+	There are a number of issues with the approach presented in the paper:
 
 	\begin{itemize}
-		\item 2 different categories of prediction scheme: prediction of positions, and prediction of input events
-		\item Position prediction
-		\item Scheme 1: assume constant velocity and predict position from that
-		\item Scheme 2: assume constant acceleration and predict velocity and hence position from that
-		\item Scheme 3: same as scheme 2, but using Lagrange polynom with degree of 2 (commonly used for interpolation and extrapolation in 3D graphics)
-		\item Scheme 4: Predict trajectory using constant velocity
-		\item Input prediction
-		\item Scheme 5: Predict position assuming constant control device (i.e. joystick) position
-		\item Scheme 6: Predict position assuming constant control device velocity
-		\item Scheme 7: Predict using Lagrange polynom and assuming constant control device acceleration
-		\item Considered applications to 3 different game types: sports, 3D action (fps, tps), simulators/racing games
-		\item For sports games, a cursor-like steering model was used
-		\item For action games and racing games, the x axis controls direction and the y axis controls motion along that bearing
-		\item Quality of prediction scheme is defined as difference between position calculated by game engine/server, and the predicted position, average deviation between actual and predicted taken
-		\item Results were surprising: the most complex schemes did not always lead to the best results.
-		\item Scheme 5 was very successful despite simplicity
-		\item Scheme 6 worked best for sports games, with all input prediction schemes working well for this game type
-		\item Scheme 7 worked best for action games
-		\item Only position prediction schemes were evaluated for racing/simulation games because a proprietary physics engine was used, and scheme 2/3 performed best
-		\item The paper claims that prediction drastically improved the experience for all game types, but fared worse for sports games because the characters move more eratically.
-		\item Critical evaluation
-		\item The model used to simulate action games in the paper is fairly unrealistic: characters in a first-person shooter do not behave like vehicles. Players can move freely in any direction rather than being constrained to motion in the direction they're facing, and tend to move very eraticalls
-		\item Using input prediction schemes for a competitive multiplayer action game might be infeasible for the same reason that input prediction failed for racing/simulation games in the paper: most action games use proprietary physics engines and many of them involve incredibly complex interactions with the environment (destructible terrain, etc.) Prediction is very difficult in such games.
-		\item Results are misleading at best: prediction probably doesn't work as well for action games as the authors claim, although they did present novel techniques for racing game prediction which perform better than the naive approach
+		\item The model used to simulate action games is fundamentally unrealistic; characters in a first-person shooter do not behave like vehicles. Instead, players are able to move freely in any direction, rather than being constrained to motion in the direction they're facing. Players in shooter games also tend to move far more eratically than in the demonstration from the paper.
+		\item Using input prediction schemes for a competitive multiplayer action game might be infeasible for the same reason that input prediction failed for racing/simulation games in the paper: most action games use proprietary physics engines, many of them involving incredibly complex interactions between game objects and the environment (explosions, destructible terrain, etc.). Prediction is very difficult in such games, hence the ubiquity of the delayed presentation approach.
 	\end{itemize}
+
+	The results presented in the paper are misleading at best -- prediction likely does not work as well for action games as the authors claim. However, the novel prediction techniques presented for both racing games and sports games do perform better than the naive approach, and might see use in future titles.
 
 	\emph{http://www.mine-control.com/zack/timesync/timesync.html}
 
