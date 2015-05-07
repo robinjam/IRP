@@ -16,7 +16,7 @@
 	\maketitle
 
 	\begin{abstract}
-		In networked multiplayer games, network latency often introduces an unacceptable delay between when the player attempts to take an action and when the action actually takes effect within the game world. In this paper, methods of quantifying the effects of this latency, algorithms that mask its apparent effects, and a selection of novel unified frameworks for lag compensation are explored. Also discussed are the advantages and limitations of each algorithm, along with their potential applications.
+		In networked multiplayer games, network latency often introduces an unacceptable delay between when the player attempts to take an action and when the action actually takes effect within the game world. In this paper, algorithms that mask the apparent effects of latency (both at the application level and at the network level) are presented, and a novel unified framework for lag compensation is explored. Also discussed are the advantages and limitations of each algorithm, along with their potential applications.
 	\end{abstract}
 
 	\section{Introduction}
@@ -188,16 +188,17 @@
 
 	\section{Conclusions}
 
-	\begin{itemize}
-		\item No catchall solution
-		\item Lots of dead reckoning algorithms, but added complexity does not always equate to significantly increased accuracy
-		\item Delayed presentation is still the standard for first-person shooters. Works well even at comparatively high latency but causes temporal paradoxes
-		\item Dead reckoning works well if game objects accelerate/decelerate slowly (racing games), but not if movement is erratic
-		\item Local lag is popular for fighting games. Works well on low latency connections but since it doesn't actually eliminate lag it's bad for high latency networks
-		\item All of these have drawbacks that would be unacceptable for certain applications
-		\item Could see the move towards unified frameworks like Timelines that abstract away the differences between these techniques, potentially allowing them to be combined where necessary
-		\item Improved network speed would help, but data cannot travel faster than light so there will always necessarily be lag
-	\end{itemize}
+	As has been demonstrated, there are numerous different methods of lag compensation, each of which involves various tradeoffs between performance and accuracy. No catchall solution exists that is suitable for every genre of game.
+
+	Numerous dead reckoning algorithms exist with varying levels of complexity, but this added complexity does not always equate to significantly improved accuracy. Dead reckoning as a general concept seems only to work well in situations where game objects change direction or speed fairly slowly and move in predictable ways, thus ruling out various genres of action game.
+
+	Delayed presentation is still the de facto standard for first-person shooters. It works well even at comparatively high latencies but can cause transient temporal paradoxes. This is usually a worthy tradeoff thanks to the vastly improved user experience delayed presentation can bring.
+
+	Local lag is popular for fighting games, working particularly well on low-latency connections, but since it doesn't actually eliminate lag it's not particularly well-suited for high-latency networks. The algorithm also does not inherently handle dropped packets, late delivery or high jitter, meaning that further techniques such as time warp are required to repair missing states.
+
+	At the network level, communication latency will always be constrained by the speed of light. Latency Equalization might be used to constrain the latency variations across clients in a game, but that necessarily induces additional lag for the lowest-latency client.
+
+	Each of these approaches has drawbacks that would be unacceptable for certain applications. In the future we could see the move towards unified frameworks such as Timelines, that abstract away the differences between these techniques, and potentially allowing them to be combined where necessary.
 
 	\printbibliography
 
